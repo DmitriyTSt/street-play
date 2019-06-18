@@ -29,7 +29,7 @@ class User implements UserInterface
     private $nickname;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $password;
 
@@ -46,7 +46,7 @@ class User implements UserInterface
     private $salt;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
     private $role;
 
@@ -62,6 +62,7 @@ class User implements UserInterface
         $this->id = uniqid();
         $this->salt = "";
         $this->devices = new ArrayCollection();
+        $this->role = "ROLE_USER";
     }
 
     public function getId(): ?string
