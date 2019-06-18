@@ -10,17 +10,21 @@
             <tr>
                 <th>Uuid</th>
                 <th>Nickname</th>
+                <th>Login</th>
+                <th>role</th>
                 <th>actions</th>
             </tr>
         </thead>
         <tbody>
         {% for user in users %}
             <tr>
-                <td>{{ user.uuid }}</td>
+                <td>{{ user.id }}</td>
                 <td>{{ user.nickname }}</td>
+                <td>{{ user.login }}</td>
+                <td>{{ user.role }}</td>
                 <td>
-                    <a href="{{ path('user_show', {'uuid': user.uuid}) }}">show</a>
-                    <a href="{{ path('user_edit', {'uuid': user.uuid}) }}">edit</a>
+                    <a href="{{ path('user_show', {'uuid': user.id}) }}">show</a>
+                    <a href="{{ path('user_edit', {'uuid': user.id}) }}">edit</a>
                 </td>
             </tr>
         {% else %}

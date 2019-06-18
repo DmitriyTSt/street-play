@@ -9,6 +9,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\EncoderFactory;
+use Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder;
 
 /**
  * @Route("/user")
@@ -35,6 +37,12 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $defaultEncoder = new MessageDigestPasswordEncoder('sha512', true, 5000);
+            $encoders = [User::class => $defaultEncoder];
+            $encoderFactory = new EncoderFactory($encoders);
+            $encoder = $encoderFactory->getEncoder($user);
+            $user->setSalt(md5(time() . $user->getPassword()));
+            $user->setPassword($encoder->encodePassword($user->getPassword(), $user->getSalt()));
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
@@ -70,7 +78,7 @@ class UserController extends AbstractController
             $this->getDoctrine()->getManager()->flush();
 
             return $this->redirectToRoute('user_index', [
-                'uuid' => $user->getUuid(),
+                'uuid' => $user->getId(),
             ]);
         }
 
@@ -85,7 +93,7 @@ class UserController extends AbstractController
      */
     public function delete(Request $request, User $user): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$user->getUuid(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($user);
             $entityManager->flush();

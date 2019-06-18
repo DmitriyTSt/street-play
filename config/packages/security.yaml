@@ -1,13 +1,29 @@
 security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        in_memory: { memory: ~ }
+        main:
+            entity:
+                class: 'App\Entity\User'
+                property: 'login'
+        api:
+            id: App\Security\ApiKeyUserProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        api:
+            pattern: ^/api
+            provider: api
+            anonymous: ~
+            stateless: true
+            simple_preauth:
+                authenticator: App\Security\ApiKeyAuthenticator
         main:
             anonymous: true
+            provider: main
+            guard:
+                authenticators:
+                    - App\Security\StreetPlayAuthenticator
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication

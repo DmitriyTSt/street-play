@@ -4,6 +4,7 @@
 namespace App\Controller\Api;
 
 
+use App\Entity\Device;
 use App\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +29,12 @@ class SecurityApiController extends AbstractApiController
             $em->persist($user);
             $em->flush();
 
-            $json = $this->serializer->serialize(['token' => $user->getUuid()],"json");
+            $device = new Device();
+            $device->setUser($user);
+            $em->persist($device);
+            $em->flush();
+
+            $json = $this->serializer->serialize(['token' => $device->getToken()],"json");
             return $this->createResponse($json);
         } else {
             throw new HttpException(Response::HTTP_FORBIDDEN, "Login failed");
