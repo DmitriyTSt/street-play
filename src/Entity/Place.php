@@ -55,6 +55,15 @@ class Place
     private $messages;
 
     /**
+     * @var Coords|null
+     * @Groups({"show", "list"})
+     * @ORM\OneToOne(targetEntity="Coords", cascade={"persist"})
+     *
+     * @Groups({"show", "list"})
+     */
+    private $coords;
+
+    /**
      * @SerializedName("lastTime")
      * @Groups({"show", "list"})
      */
@@ -148,4 +157,22 @@ class Place
             $this->messages->removeElement($message);
         }
     }
+
+    /**
+     * @return Coords
+     */
+    public function getCoords()
+    {
+        return $this->coords;
+    }
+
+    /**
+     * @param Coords $coords
+     */
+    public function setCoords(Coords $coords)
+    {
+        $this->coords = $coords;
+    }
+
+
 }
