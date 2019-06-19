@@ -45,7 +45,9 @@ class Message implements AuthorInterface
     private $createdAt;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     *
+     * @var User
+     * @ORM\ManyToOne(targetEntity="User")
      *
      * @Groups({"show", "list"})
      */
@@ -94,15 +96,13 @@ class Message implements AuthorInterface
         return $this->createdAt;
     }
 
-    public function getAuthor(): ?string
+    public function getAuthor()
     {
         return $this->author;
     }
 
-    public function setAuthor(string $author): self
+    public function setAuthor(User $author)
     {
         $this->author = $author;
-
-        return $this;
     }
 }

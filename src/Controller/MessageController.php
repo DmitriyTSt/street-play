@@ -31,6 +31,7 @@ class MessageController extends AbstractController
     public function new(Request $request): Response
     {
         $message = new Message();
+        $message->setAuthor($this->getUser());
         $form = $this->createForm(MessageType::class, $message);
         $form->handleRequest($request);
 

@@ -26,12 +26,13 @@ class MessageApiController extends AbstractApiController
         $place = $em->getRepository(Place::class)->find($placeId);
         $text = $data['text'];
         $message = new Message();
+        $message->setAuthor($this->getUser());
         $message->setPlace($place);
         $message->setText($text);
 
         $em->persist($message);
         $em->flush();
 
-        return $this->createResponse('Message created', Response::HTTP_OK);
+        return $this->createResponse(json_encode('Message created'), Response::HTTP_OK);
     }
 }
