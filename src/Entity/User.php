@@ -18,13 +18,14 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\Column(type="string", length=255)
+     * @Groups({"show", "list"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Groups("show")
+     * @Groups({"list", "show"})
      */
     private $nickname;
 

@@ -34,7 +34,7 @@ class SecurityApiController extends AbstractApiController
             $em->persist($device);
             $em->flush();
 
-            $json = $this->serializer->serialize(['token' => $device->getToken()],"json");
+            $json = $this->serializer->serialize(['uuid' => $user->getId(), 'token' => $device->getToken()],"json");
             return $this->createResponse($json);
         } else {
             throw new HttpException(Response::HTTP_FORBIDDEN, "Login failed");

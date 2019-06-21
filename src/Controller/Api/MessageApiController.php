@@ -32,7 +32,7 @@ class MessageApiController extends AbstractApiController
 
         $em->persist($message);
         $em->flush();
-
-        return $this->createResponse(json_encode('Message created'), Response::HTTP_OK);
+        $json = $this->serializer->serialize($message,"json", ['groups' => ["show"]]);
+        return $this->createResponse($json);
     }
 }

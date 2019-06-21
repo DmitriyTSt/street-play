@@ -74,7 +74,7 @@ class InitProjectCommand extends ContainerAwareCommand
                 'admin'
             );
             $password = $helper->ask($input, $output, $question);
-
+            $user->setPassword($password);
             $defaultEncoder = new MessageDigestPasswordEncoder('sha512', true, 5000);
             $encoders = [User::class => $defaultEncoder];
             $encoderFactory = new EncoderFactory($encoders);
