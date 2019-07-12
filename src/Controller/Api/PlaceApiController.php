@@ -4,8 +4,10 @@
 namespace App\Controller\Api;
 
 use App\Entity\Place;
+use App\Helper\PlaceStatus;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class PlaceApiController extends AbstractApiController
@@ -37,7 +39,6 @@ class PlaceApiController extends AbstractApiController
             ->getRepository(Place::class)
             ->find($id);
         $messages = $entity->getMessages();
-        $jsonMessages = $this->serializer->serialize($messages, "json", ['groups' => ["show"]]);
         $json = $this->serializer->serialize($entity,"json", ['groups' => ["show"]]);
         return $this->createResponse($json);
     }
@@ -53,6 +54,7 @@ class PlaceApiController extends AbstractApiController
 
         $entity = $this->serializer->deserialize($request->getContent(), Place::class, 'json');
 
+        $entity->setStatus(PlaceStatus::NEW);
         $em = $this->getDoctrine()->getManager();
         $em->persist($entity);
         $em->flush();
@@ -69,14 +71,25 @@ class PlaceApiController extends AbstractApiController
      */
     public function edit(Request $request): Response
     {
-        $entity = $this->serializer->deserialize($request->getContent(), Place::class, 'json');
+        $body = $request->getContent();
+        $id = json_decode($body, true)['id'];
+        $baseObject = $this->getDoctrine()->getRepository(Place::class)->find($id);
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($entity);
-        $em->flush();
+        if ($baseObject != null) {
+            $entity = $this->serializer->deserialize($body, Place::class, 'json', array(
+                'object_to_populate' => $baseObject,
+                'groups' => array('update')
+            ));
 
-        $json = $this->serializer->serialize($entity,"json", ['groups' => ["show"]]);
-        return $this->createResponse($json);
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($entity);
+            $em->flush();
+
+            $json = $this->serializer->serialize($entity,"json", ['groups' => ["show"]]);
+            return $this->createResponse($json);
+        } else {
+            throw new HttpException(Response::HTTP_NOT_FOUND, "Object not found");
+        }
     }
 
     /**

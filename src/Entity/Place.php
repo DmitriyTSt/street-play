@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Helper\PlaceStatus;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
@@ -26,14 +27,14 @@ class Place
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Groups({"show", "list"})
+     * @Groups({"show", "list", "update"})
      */
     private $type;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *
-     * @Groups({"show", "list"})
+     * @Groups({"show", "list", "update"})
      */
     private $description;
 
@@ -64,6 +65,13 @@ class Place
     private $coords;
 
     /**
+     * @ORM\Column(type="integer")
+     *
+     * @Groups({"show", "list", "update"})
+     */
+    private $status = PlaceStatus::NEW;
+
+    /**
      * @SerializedName("lastTime")
      * @Groups({"show", "list"})
      */
@@ -79,6 +87,7 @@ class Place
     public function __construct()
     {
         $this->messages = new ArrayCollection();
+        $this->status = PlaceStatus::NEW;
     }
 
     public function getId(): ?int
@@ -172,6 +181,16 @@ class Place
     public function setCoords(Coords $coords)
     {
         $this->coords = $coords;
+    }
+
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    public function setStatus($status)
+    {
+        $this->status = $status;
     }
 
 
