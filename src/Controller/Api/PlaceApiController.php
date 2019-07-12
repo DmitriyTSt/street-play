@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 
 use App\Entity\Place;
 use App\Helper\PlaceStatus;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -21,7 +22,7 @@ class PlaceApiController extends AbstractApiController
     {
         $entity = $this->getDoctrine()
             ->getRepository(Place::class)
-            ->findAll();
+            ->findBy(['status' => PlaceStatus::CONFIRMED]);
 
         $json = $this->serializer->serialize($entity,"json", ['groups' => ["list"]]);
         return $this->createResponse($json);
@@ -67,6 +68,7 @@ class PlaceApiController extends AbstractApiController
      * @param Request $request
      * @return Response
      *
+     * @IsGranted("ROLE_ADMIN")
      * @Route("/places", methods={"PATCH"})
      */
     public function edit(Request $request): Response

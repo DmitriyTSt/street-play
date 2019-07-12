@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Place;
 use App\Form\PlaceType;
+use App\Form\PlaceTypeEdit;
 use App\Repository\PlaceRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -59,11 +61,13 @@ class PlaceController extends AbstractController
     }
 
     /**
+     *
+     * @IsGranted("ROLE_ADMIN")
      * @Route("/{id}/edit", name="place_edit", methods={"GET","POST"})
      */
     public function edit(Request $request, Place $place): Response
     {
-        $form = $this->createForm(PlaceType::class, $place);
+        $form = $this->createForm(PlaceTypeEdit::class, $place);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

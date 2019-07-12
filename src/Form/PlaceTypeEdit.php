@@ -9,14 +9,19 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PlaceType extends AbstractType
+class PlaceTypeEdit extends PlaceType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        parent::buildForm($builder, $options);
         $builder
-            ->add('type')
-            ->add('description')
-            ->add('images')
+            ->add('status', ChoiceType::class, array(
+                'label' => 'Статус',
+                'choices' => [
+                    'НОВЫЙ' => PlaceStatus::NEW,
+                    'ПОДТВЕЖДЕН' => PlaceStatus::CONFIRMED,
+                ]
+            ))
         ;
     }
 
